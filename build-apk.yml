@@ -24,6 +24,8 @@ jobs:
             curl -fsSL https://saifulmine27.github.io/fuuud/ -o index.html
           fi
           python3 prepare.py index.html
+        env:
+          FOODLENS_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - run: npm install
 
