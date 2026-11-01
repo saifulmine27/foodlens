@@ -1,0 +1,7 @@
+{
+  "appId": "com.saiful.foodlensbd",
+  "appName": "FoodLens BD",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "adjustMarginsForEdgeToEdge": "auto" }
+}
