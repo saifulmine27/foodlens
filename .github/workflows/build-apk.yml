@@ -1,0 +1,45 @@
+name: Build Android APK
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Get index.html and patch it into www/
+        run: |
+          if [ ! -f index.html ]; then
+            curl -fsSL https://saifulmine27.github.io/fuuud/ -o index.html
+          fi
+          python3 prepare.py index.html
+
+      - run: npm install
+
+      - run: npx cap add android
+
+      - name: Add camera permission
+        run: |
+          sed -i 's#</manifest>#    <uses-permission android:name="android.permission.CAMERA" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n</manifest>#' android/app/src/main/AndroidManifest.xml
+
+      - run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FoodLens-BD-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
